@@ -4,60 +4,48 @@ error_reporting(0);
 include('includes/dbconnection.php');
 
 if(isset($_POST['login'])) 
-  {
-    $username=$_POST['username'];
-    $password=md5($_POST['password']);
-    $sql ="SELECT ID FROM tbladmin WHERE UserName=:username and Password=:password";
-    $query=$dbh->prepare($sql);
-    $query-> bindParam(':username', $username, PDO::PARAM_STR);
-$query-> bindParam(':password', $password, PDO::PARAM_STR);
-    $query-> execute();
-    $results=$query->fetchAll(PDO::FETCH_OBJ);
-    if($query->rowCount() > 0)
 {
-foreach ($results as $result) {
-$_SESSION['sturecmsaid']=$result->ID;
-}
+  $username=$_POST['username'];
+  $password=$_POST['password'];
+  $sql ="SELECT ID FROM tbladmin WHERE UserName='$username' and Password='$password'";
+  $query = mysqli_query($conn, $sql);
+  $results = mysqli_fetch_all($query, MYSQLI_ASSOC);
+  if(mysqli_num_rows($query) > 0)
+  {
+    foreach ($results as $result) {
+      $_SESSION['sturecmsaid']=$result['ID'];
+    }
 
-  if(!empty($_POST["remember"])) {
-//COOKIES for username
-setcookie ("user_login",$_POST["username"],time()+ (10 * 365 * 24 * 60 * 60));
-//COOKIES for password
-setcookie ("userpassword",$_POST["password"],time()+ (10 * 365 * 24 * 60 * 60));
-} else {
-if(isset($_COOKIE["user_login"])) {
-setcookie ("user_login","");
-if(isset($_COOKIE["userpassword"])) {
-setcookie ("userpassword","");
+    if(!empty($_POST["remember"])) {
+      //COOKIES for username
+      setcookie ("user_login",$_POST["username"],time()+ (10 * 365 * 24 * 60 * 60));
+      //COOKIES for password
+      setcookie ("userpassword",$_POST["password"],time()+ (10 * 365 * 24 * 60 * 60));
+    } else {
+      if(isset($_COOKIE["user_login"])) {
+        setcookie ("user_login","");
+        if(isset($_COOKIE["userpassword"])) {
+          setcookie ("userpassword","");
         }
       }
+    }
+    $_SESSION['login']=$_POST['username'];
+    echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
+  } else{
+    echo "<script>alert('Invalid Details');</script>";
+  }
 }
-$_SESSION['login']=$_POST['username'];
-echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
-} else{
-echo "<script>alert('Invalid Details');</script>";
-}
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+ <head>
+  <title>Student  Management System|| Login Page</title>
+  <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
+  <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
+  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
+  <link rel="stylesheet" href="css/style.css">
   
-    <title>Student  Management System|| Login Page</title>
-    <!-- plugins:css -->
-    <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
-    <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
-    <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-    <!-- endinject -->
-    <!-- Plugin css for this page -->
-    <!-- End plugin css for this page -->
-    <!-- inject:css -->
-    <!-- endinject -->
-    <!-- Layout styles -->
-    <link rel="stylesheet" href="css/style.css">
-   
-  </head>
+ </head>
   <body>
     <div class="container-scroller">
       <div class="container-fluid page-body-wrapper full-page-wrapper">

@@ -1,35 +1,40 @@
 <?php
 session_start();
 error_reporting(0);
+
 include('includes/dbconnection.php');
 
-if(isset($_POST['submit']))
-  {
-    $email=$_POST['email'];
-$mobile=$_POST['mobile'];
-$newpassword=md5($_POST['newpassword']);
-  $sql ="SELECT Email FROM tbladmin WHERE Email=:email and MobileNumber=:mobile";
-$query= $dbh -> prepare($sql);
-$query-> bindParam(':email', $email, PDO::PARAM_STR);
-$query-> bindParam(':mobile', $mobile, PDO::PARAM_STR);
-$query-> execute();
-$results = $query -> fetchAll(PDO::FETCH_OBJ);
-if($query -> rowCount() > 0)
-{
-$con="update tbladmin set Password=:newpassword where Email=:email and MobileNumber=:mobile";
-$chngpwd1 = $dbh->prepare($con);
-$chngpwd1-> bindParam(':email', $email, PDO::PARAM_STR);
-$chngpwd1-> bindParam(':mobile', $mobile, PDO::PARAM_STR);
-$chngpwd1-> bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
-$chngpwd1->execute();
-echo "<script>alert('Your Password succesfully changed');</script>";
-}
-else {
-echo "<script>alert('Email id or Mobile no is invalid');</script>"; 
-}
-}
+if (isset($_POST['submit'])) {
+    $email = $_POST['email'];
+    $mobile = $_POST['mobile'];
+    $newpassword = $_POST['newpassword'];
 
+
+
+    $email = $conn->real_escape_string($email);
+    $mobile = $conn->real_escape_string($mobile);
+
+    $sql = "SELECT Email FROM tbladmin WHERE Email='$email' and MobileNumber='$mobile'";
+    $query = $conn->query($sql);
+
+    if ($query->num_rows > 0) {
+        $newpassword = $conn->real_escape_string($newpassword);
+        $con = "UPDATE tbladmin SET Password='$newpassword' WHERE Email='$email' and MobileNumber='$mobile'";
+        $chngpwd1 = $conn->query($con);
+
+        if ($chngpwd1) {
+            echo "<script>alert('Your Password successfully changed');</script>";
+        } else {
+            echo "<script>alert('Failed to change password');</script>";
+        }
+    } else {
+        echo "<script>alert('Email id or Mobile no is invalid');</script>";
+    }
+
+    $conn->close();
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -90,7 +95,7 @@ return true;
                   <div class="mt-3">
                     <button class="btn btn-success btn-block loginbtn" name="submit" type="submit">Reset</button>
                   </div>
-                  <div class="my-2 d-flex justify-content-between align-items-center">
+                  <div class="my-2 d-flex justify-content between align-items-center">
                     
                     <a href="login.php" class="auth-link text-black">signin</a>
                   </div>

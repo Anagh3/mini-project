@@ -2,78 +2,62 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-if (strlen($_SESSION['sturecmsaid']==0)) {
+
+if (strlen($_SESSION['sturecmsaid']) == 0) {
   header('location:logout.php');
-  } else{
-   if(isset($_POST['submit']))
-  {
- $stuname=$_POST['stuname'];
- $stuemail=$_POST['stuemail'];
- $stuclass=$_POST['stuclass'];
- $gender=$_POST['gender'];
- $dob=$_POST['dob'];
- $stuid=$_POST['stuid'];
- $fname=$_POST['fname'];
- $mname=$_POST['mname'];
- $connum=$_POST['connum'];
- $altconnum=$_POST['altconnum'];
- $address=$_POST['address'];
- $uname=$_POST['uname'];
- $password=md5($_POST['password']);
- $image=$_FILES["image"]["name"];
- $ret="select UserName from tblstudent where UserName=:uname || StuID=:stuid";
- $query= $dbh -> prepare($ret);
-$query->bindParam(':uname',$uname,PDO::PARAM_STR);
-$query->bindParam(':stuid',$stuid,PDO::PARAM_STR);
-$query-> execute();
-     $results = $query -> fetchAll(PDO::FETCH_OBJ);
-if($query -> rowCount() == 0)
-{
-$extension = substr($image,strlen($image)-4,strlen($image));
-$allowed_extensions = array(".jpg","jpeg",".png",".gif");
-if(!in_array($extension,$allowed_extensions))
-{
-echo "<script>alert('Logo has Invalid format. Only jpg / jpeg/ png /gif format allowed');</script>";
-}
-else
-{
-$image=md5($image).time().$extension;
- move_uploaded_file($_FILES["image"]["tmp_name"],"images/".$image);
-$sql="insert into tblstudent(StudentName,StudentEmail,StudentClass,Gender,DOB,StuID,FatherName,MotherName,ContactNumber,AltenateNumber,Address,UserName,Password,Image)values(:stuname,:stuemail,:stuclass,:gender,:dob,:stuid,:fname,:mname,:connum,:altconnum,:address,:uname,:password,:image)";
-$query=$dbh->prepare($sql);
-$query->bindParam(':stuname',$stuname,PDO::PARAM_STR);
-$query->bindParam(':stuemail',$stuemail,PDO::PARAM_STR);
-$query->bindParam(':stuclass',$stuclass,PDO::PARAM_STR);
-$query->bindParam(':gender',$gender,PDO::PARAM_STR);
-$query->bindParam(':dob',$dob,PDO::PARAM_STR);
-$query->bindParam(':stuid',$stuid,PDO::PARAM_STR);
-$query->bindParam(':fname',$fname,PDO::PARAM_STR);
-$query->bindParam(':mname',$mname,PDO::PARAM_STR);
-$query->bindParam(':connum',$connum,PDO::PARAM_STR);
-$query->bindParam(':altconnum',$altconnum,PDO::PARAM_STR);
-$query->bindParam(':address',$address,PDO::PARAM_STR);
-$query->bindParam(':uname',$uname,PDO::PARAM_STR);
-$query->bindParam(':password',$password,PDO::PARAM_STR);
-$query->bindParam(':image',$image,PDO::PARAM_STR);
- $query->execute();
-   $LastInsertId=$dbh->lastInsertId();
-   if ($LastInsertId>0) {
-    echo '<script>alert("Student has been added.")</script>';
-echo "<script>window.location.href ='add-students.php'</script>";
-  }
-  else
-    {
-         echo '<script>alert("Something Went Wrong. Please try again")</script>';
+} else {
+  if (isset($_POST['submit'])) {
+    $stuname = $_POST['stuname'];
+    $stuemail = $_POST['stuemail'];
+    $stuclass = $_POST['stuclass'];
+    $gender = $_POST['gender'];
+    $dob = $_POST['dob'];
+    $stuid = $_POST['stuid'];
+    $fname = $_POST['fname'];
+    $mname = $_POST['mname'];
+    $connum = $_POST['connum'];
+    $altconnum = $_POST['altconnum'];
+    $address = $_POST['address'];
+    $uname = $_POST['uname'];
+    $password = $_POST['password'];
+
+    // Check if an image was uploaded
+    if (isset($_FILES['image'])) {
+      $image = $_FILES['image']['name'];
+      $image_tmp = $_FILES['image']['tmp_name'];
+
+      // Check for valid file extensions
+      $allowed_extensions = array(".jpg", ".jpeg", ".png", ".gif");
+      $extension = strtolower(substr($image, strrpos($image, ".")));
+      
+      if (in_array($extension, $allowed_extensions)) {
+        $image = time() . $extension;
+
+        // Move the uploaded file to the images directory
+        move_uploaded_file($image_tmp, "images/" . $image);
+
+        // Create and execute a prepared statement to insert data into the database
+        $sql = "INSERT INTO tblstudent (StudentName, StudentEmail, StudentClass, Gender, DOB, StuID, FatherName, MotherName, ContactNumber, AltenateNumber, Address, UserName, Password, Image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('ssssssssssssss', $stuname, $stuemail, $stuclass, $gender, $dob, $stuid, $fname, $mname, $connum, $altconnum, $address, $uname, $password, $image);
+        $result = $stmt->execute();
+
+        if ($result) {
+          echo '<script>alert("Student has been added.")</script>';
+          echo "<script>window.location.href = 'add-students.php'</script>";
+        } else {
+          echo '<script>alert("Something Went Wrong. Please try again")</script>';
+        }
+      } else {
+        echo "<script>alert('Image has an invalid format. Only jpg / jpeg / png / gif format allowed');</script>";
+      }
+    } else {
+      echo "<script>alert('Please select an image');</script>";
     }
-}}
-
-else
-{
-
-echo "<script>alert('Username or Student Id  already exist. Please try again');</script>";
+  }
 }
-}
-  ?>
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -135,19 +119,14 @@ echo "<script>alert('Username or Student Id  already exist. Please try again');<
                         <label for="exampleInputEmail3">Student Class</label>
                         <select  name="stuclass" class="form-control" required='true'>
                           <option value="">Select Class</option>
-                         <?php 
-
+                          <?php
 $sql2 = "SELECT * from    tblclass ";
-$query2 = $dbh -> prepare($sql2);
-$query2->execute();
-$result2=$query2->fetchAll(PDO::FETCH_OBJ);
-
-foreach($result2 as $row1)
-{          
-    ?>  
-<option value="<?php echo htmlentities($row1->ID);?>"><?php echo htmlentities($row1->ClassName);?> <?php echo htmlentities($row1->Section);?></option>
- <?php } ?> 
-                        </select>
+$query2 = mysqli_query($conn, $sql2);
+while ($row1 = mysqli_fetch_array($query2)) {
+    ?>
+    <option value="<?php echo htmlentities($row1['ID']); ?>"><?php echo htmlentities($row1['ClassName']); ?> <?php echo htmlentities($row1['Section']); ?></option>
+    <?php
+}    ?>      </select>
                       </div>
                       <div class="form-group">
                         <label for="exampleInputName1">Gender</label>
@@ -234,4 +213,4 @@ foreach($result2 as $row1)
     <script src="js/select2.js"></script>
     <!-- End custom js for this page -->
   </body>
-</html><?php }  ?>
+</html><?php   ?>

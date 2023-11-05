@@ -6,11 +6,11 @@ include('includes/dbconnection.php');
 <!doctype html>
 <html>
 <head>
-<title>Student  Management System || Contact Us Page</title>
+<title>Student Management System || Contact Us Page</title>
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!--bootstrap-->
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all">
-<!--coustom css-->
+<!--custom css-->
 <link href="css/style.css" rel="stylesheet" type="text/css"/>
 <!--script-->
 <script src="js/jquery-1.11.0.min.js"></script>
@@ -24,68 +24,67 @@ include('includes/dbconnection.php');
 <script type="text/javascript" src="js/easing.js"></script>
 <!--script-->
 <script type="text/javascript">
-			jQuery(document).ready(function($) {
-				$(".scroll").click(function(event){		
-					event.preventDefault();
-					$('html,body').animate({scrollTop:$(this.hash).offset().top},900);
-				});
-			});
+    jQuery(document).ready(function($) {
+        $(".scroll").click(function(event){        
+            event.preventDefault();
+            $('html,body').animate({scrollTop:$(this.hash).offset().top},900);
+        });
+    });
 </script>
 <!--/script-->
 </head>
-	<body>
+<body>
 <!--header-->
-		<?php include_once('includes/header.php');?>
+<?php include_once('includes/header.php');?>
 <!-- Top Navigation -->
 <div class="banner banner5">
-	<div class="container">
-	<h2>Contact</h2>
-	</div>
+    <div class="container">
+    <h2>Contact</h2>
+    </div>
 </div>
 <!--header-->
-		<!-- contact -->
-		<div class="contact">
-			<!-- container -->
-			<div class="container">
-				<div class="contact-info">
-					<h3 class="c-text">Feel Free to contact with us!!!</h3>
-				</div>
-				
-				<div class="contact-grids">
-					<?php
-$sql="SELECT * from tblpage where PageType='contactus'";
-$query = $dbh -> prepare($sql);
-$query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
+<!-- contact -->
+<div class="contact">
+    <!-- container -->
+    <div class="container">
+        <div class="contact-info">
+            <h3 class="c-text">Feel Free to contact with us!!!</h3>
+        </div>
+        
+        <div class="contact-grids">
+            <?php
+            $conn = new mysqli("localhost", "root", "", "studentmsdb");
 
-$cnt=1;
-if($query->rowCount() > 0)
-{
-foreach($results as $row)
-{               ?>
-					<div class="col-md-4 contact-grid-left">
-						<h3>Address :</h3>
-						<p><?php  echo htmlentities($row->PageDescription);?>
-						</p>
-					</div>
-					<div class="col-md-4 contact-grid-middle">
-						<h3>Phones :</h3>
-						<p><?php  echo htmlentities($row->MobileNumber);?>
-						</p>
-					</div>
-					<div class="col-md-4 contact-grid-right">
-						<h3>E-mail :</h3>
-						<p><?php  echo htmlentities($row->Email);?>
-						</p>
-					</div>
-					<div class="clearfix"> </div>
-					<?php $cnt=$cnt+1;}} ?>
-				</div>
-			</div>
-			<!-- //container -->
-		</div>
-		<!-- //contact -->
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+            }
+
+            $sql = "SELECT * FROM tblpage WHERE PageType='contactus'";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo '<div class="col-md-4 contact-grid-left">';
+                    echo '<h3>Address :</h3>';
+                    echo '<p>' . htmlentities($row['PageDescription']) . '</p>';
+                    echo '</div>';
+                    echo '<div class="col-md-4 contact-grid-middle">';
+                    echo '<h3>Phones :</h3>';
+                    echo '<p>' . htmlentities($row['MobileNumber']) . '</p>';
+                    echo '</div>';
+                    echo '<div class="col-md-4 contact-grid-right">';
+                    echo '<h3>E-mail :</h3>';
+                    echo '<p>' . htmlentities($row['Email']) . '</p>';
+                    echo '</div>';
+                }
+            }
+            ?>
+        </div>
+    </div>
+    <!-- //container -->
+</div>
+<!-- //contact -->
 <?php include_once('includes/footer.php');?>
 <!--/copy-rights-->
-	</body>
+</body>
 </html>

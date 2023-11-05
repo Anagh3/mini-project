@@ -10,29 +10,32 @@
           <li><a href="admin/login.php">Admin</a></li>
           <li><a href="user/login.php">Student</a></li>
         </ul>
-       
       </div>
       <div class="col-md-3 footer-middle">
         <?php
-$sql="SELECT * from tblpage where PageType='contactus'";
-$query = $dbh -> prepare($sql);
-$query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
+        $conn = new mysqli("localhost", "root", "", "studentmsdb");
 
-$cnt=1;
-if($query->rowCount() > 0)
-{
-foreach($results as $row)
-{               ?>
-        <h3>Address</h3>
-        <div class="address">
-          <p><?php  echo htmlentities($row->PageDescription);?>
-          </p>
-        </div>
-        <div class="phone">
-          <p><?php  echo htmlentities($row->MobileNumber);?></p>
-        </div>
-      <?php $cnt=$cnt+1;}} ?></div>
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        $sql = "SELECT * FROM tblpage WHERE PageType='contactus'";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo '<h3>Address</h3>';
+                echo '<div class="address">';
+                echo '<p>' . htmlentities($row['PageDescription']) . '</p>';
+                echo '</div>';
+                echo '<div class="phone">';
+                echo '<p>' . htmlentities($row['MobileNumber']) . '</p>';
+                echo '</div>';
+            }
+        }
+        ?>
+
+      </div>
       <div class="col-md-3 footer-right">
         <h3>SMS</h3>
         <p>Proin eget ipsum ultrices, aliquet velit eget, tempus tortor. Phasellus non velit sit amet diam faucibus molestie tincidunt efficitur nisi.</p>
@@ -60,7 +63,6 @@ foreach($results as $row)
         </ul>
       </div>
       <div class="clearfix"> </div>
-      
     </div>
     <!-- //container -->
     <!---->

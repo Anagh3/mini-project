@@ -2,32 +2,31 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-if (strlen($_SESSION['sturecmsaid']==0)) {
-  header('location:logout.php');
-  } else{
-   if(isset($_POST['submit']))
-  {
- $nottitle=$_POST['nottitle'];
- $notmsg=$_POST['notmsg'];
- $eid=$_GET['editid'];
-$sql="update tblpublicnotice set NoticeTitle=:nottitle,NoticeMessage=:notmsg where ID=:eid";
-$query=$dbh->prepare($sql);
-$query->bindParam(':nottitle',$nottitle,PDO::PARAM_STR);
-$query->bindParam(':notmsg',$notmsg,PDO::PARAM_STR);
-$query->bindParam(':eid',$eid,PDO::PARAM_STR);
- $query->execute();
-  echo '<script>alert("Notice has been updated")</script>';
-}
 
-  ?>
+if (empty($_SESSION['sturecmsaid'])) {
+  header('location:logout.php');
+} else {
+  if (isset($_POST['submit'])) {
+    $nottitle = $_POST['nottitle'];
+    $notmsg = $_POST['notmsg'];
+    $eid = $_GET['editid'];
+
+    $sql = "UPDATE tblpublicnotice SET NoticeTitle = '$nottitle', NoticeMessage = '$notmsg' WHERE ID = '$eid'";
+    $query = mysqli_query($conn, $sql);
+
+    if ($query) {
+      echo '<script>alert("Notice has been updated")</script>';
+    }
+  }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
-   
     <title>Student  Management System|| Update Notice</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
-    <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
+    <link rel stylesheet href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <!-- endinject -->
     <!-- Plugin css for this page -->
@@ -38,16 +37,15 @@ $query->bindParam(':eid',$eid,PDO::PARAM_STR);
     <!-- endinject -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="css/style.css" />
-    
   </head>
   <body>
     <div class="container-scroller">
       <!-- partial:partials/_navbar.html -->
-     <?php include_once('includes/header.php');?>
+      <?php include_once('includes/header.php'); ?>
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
         <!-- partial:partials/_sidebar.html -->
-      <?php include_once('includes/sidebar.php');?>
+        <?php include_once('includes/sidebar.php'); ?>
         <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
@@ -61,36 +59,28 @@ $query->bindParam(':eid',$eid,PDO::PARAM_STR);
               </nav>
             </div>
             <div class="row">
-          
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title" style="text-align: center;">Update Notice</h4>
-                   
                     <form class="forms-sample" method="post" enctype="multipart/form-data">
                       <?php
-$eid=$_GET['editid'];
-$sql="SELECT * from tblpublicnotice where ID=:eid";
-$query = $dbh -> prepare($sql);
-$query->bindParam(':eid',$eid,PDO::PARAM_STR);
-$query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
-$cnt=1;
-if($query->rowCount() > 0)
-{
-foreach($results as $row)
-{               ?>
+                      $eid = $_GET['editid'];
+                      $sql = "SELECT * from tblpublicnotice WHERE ID = '$eid'";
+                      $query = mysqli_query($conn, $sql);
+                      $row = mysqli_fetch_assoc($query);
+                      if ($row) {
+                      ?>
                       <div class="form-group">
                         <label for="exampleInputName1">Notice Title</label>
-                        <input type="text" name="nottitle" value="<?php  echo htmlentities($row->NoticeTitle);?>" class="form-control" required='true'>
+                        <input type="text" name="nottitle" value="<?php echo htmlentities($row['NoticeTitle']); ?>" class="form-control" required="true">
                       </div>
                       <div class="form-group">
                         <label for="exampleInputName1">Notice Message</label>
-                        <textarea name="notmsg" value="" class="form-control" required='true'><?php  echo htmlentities($row->NoticeMessage);?></textarea>
+                        <textarea name="notmsg" class="form-control" required="true"><?php echo htmlentities($row['NoticeMessage']); ?></textarea>
                       </div>
-                   <?php $cnt=$cnt+1;}} ?>
+                      <?php } ?>
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
-                     
                     </form>
                   </div>
                 </div>
@@ -99,7 +89,7 @@ foreach($results as $row)
           </div>
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
-         <?php include_once('includes/footer.php');?>
+          <?php include_once('includes/footer.php'); ?>
           <!-- partial -->
         </div>
         <!-- main-panel ends -->
@@ -123,4 +113,4 @@ foreach($results as $row)
     <script src="js/select2.js"></script>
     <!-- End custom js for this page -->
   </body>
-</html><?php }  ?>
+</html>

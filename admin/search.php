@@ -2,21 +2,25 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-if (strlen($_SESSION['sturecmsaid']==0)) {
+
+if (strlen($_SESSION['sturecmsaid']) == 0) {
   header('location:logout.php');
-  } else{
+} else {
    // Code for deletion
-if(isset($_GET['delid']))
-{
-$rid=intval($_GET['delid']);
-$sql="delete from tblstudent where ID=:rid";
-$query=$dbh->prepare($sql);
-$query->bindParam(':rid',$rid,PDO::PARAM_STR);
-$query->execute();
- echo "<script>alert('Data deleted');</script>"; 
-  echo "<script>window.location.href = 'manage-students.php'</script>";     
-
-
+   if (isset($_GET['delid'])) {
+       $rid = intval($_GET['delid']);
+      
+       $sql = "DELETE FROM tblstudent WHERE ID = '$rid'";
+       $query = mysqli_query($conn, $sql);
+       
+       if ($query) {
+           echo "<script>alert('Data deleted');</script>";
+           echo "<script>window.location.href = 'manage-students.php'</script>";
+       } else {
+           echo "<script>alert('Failed to delete data');</script>";
+       }
+       
+   }
 }
 ?>
 <!DOCTYPE html>
@@ -99,51 +103,54 @@ $sdata=$_POST['searchdata'];
                           </tr>
                         </thead>
                         <tbody>
-                           <?php
-                           if (isset($_GET['pageno'])) {
-            $pageno = $_GET['pageno'];
-        } else {
-            $pageno = 1;
-        }
-        // Formula for pagination
-        $no_of_records_per_page = 5;
-        $offset = ($pageno-1) * $no_of_records_per_page;
-       $ret = "SELECT ID FROM tblstudent";
-$query1 = $dbh -> prepare($ret);
-$query1->execute();
-$results1=$query1->fetchAll(PDO::FETCH_OBJ);
-$total_rows=$query1->rowCount();
+                        <?php
+if (isset($_GET['pageno'])) {
+    $pageno = $_GET['pageno'];
+} else {
+    $pageno = 1;
+}
+
+$no_of_records_per_page = 5;
+$offset = ($pageno - 1) * $no_of_records_per_page;
+
+$ret = "SELECT ID FROM tblstudent";
+$query1 = mysqli_query($conn, $ret);
+$total_rows = mysqli_num_rows($query1);
 $total_pages = ceil($total_rows / $no_of_records_per_page);
-$sql="SELECT tblstudent.StuID,tblstudent.ID as sid,tblstudent.StudentName,tblstudent.StudentEmail,tblstudent.DateofAdmission,tblclass.ClassName,tblclass.Section from tblstudent join tblclass on tblclass.ID=tblstudent.StudentClass where tblstudent.StuID like '$sdata%' LIMIT $offset, $no_of_records_per_page";
-$query = $dbh -> prepare($sql);
-$query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
 
-$cnt=1;
-if($query->rowCount() > 0)
-{
-foreach($results as $row)
-{               ?>   
-                          <tr>
-                           
-                            <td><?php echo htmlentities($cnt);?></td>
-                            <td><?php  echo htmlentities($row->StuID);?></td>
-                            <td><?php  echo htmlentities($row->ClassName);?> <?php  echo htmlentities($row->Section);?></td>
-                            <td><?php  echo htmlentities($row->StudentName);?></td>
-                            <td><?php  echo htmlentities($row->StudentEmail);?></td>
-                            <td><?php  echo htmlentities($row->DateofAdmission);?></td>
-                            <td>
-                              <div><a href="edit-student-detail.php?editid=<?php echo htmlentities ($row->sid);?>"><i class="icon-eye"></i></a>
-                                                || <a href="manage-students.php?delid=<?php echo ($row->sid);?>" onclick="return confirm('Do you really want to Delete ?');"> <i class="icon-trash"></i></a></div>
-                            </td> 
-                          </tr><?php 
-$cnt=$cnt+1;
-} } else { ?>
-  <tr>
+$sql = "SELECT tblstudent.StuID, tblstudent.ID as sid, tblstudent.StudentName, tblstudent.StudentEmail, tblstudent.DateofAdmission, tblclass.ClassName, tblclass.Section FROM tblstudent JOIN tblclass ON tblclass.ID=tblstudent.StudentClass WHERE tblstudent.StuID LIKE '$sdata%' LIMIT $offset, $no_of_records_per_page";
+$query = mysqli_query($conn, $sql);
+
+$cnt = 1;
+
+if (mysqli_num_rows($query) > 0) {
+    while ($row = mysqli_fetch_assoc($query)) {
+?>
+<tr>
+    <td><?php echo htmlentities($cnt); ?></td>
+    <td><?php echo htmlentities($row['StuID']); ?></td>
+    <td><?php echo htmlentities($row['ClassName']); ?> <?php echo htmlentities($row['Section']); ?></td>
+    <td><?php echo htmlentities($row['StudentName']); ?></td>
+    <td><?php echo htmlentities($row['StudentEmail']); ?></td>
+    <td><?php echo htmlentities($row['DateofAdmission']); ?></td>
+    <td>
+        <div><a href="edit-student-detail.php?editid=<?php echo htmlentities($row['sid']); ?>"><i class="icon-eye"></i></a>
+            || <a href="manage-students.php?delid=<?php echo ($row['sid']); ?>"
+                onclick="return confirm('Do you really want to Delete ?');"> <i class="icon-trash"></i></a></div>
+    </td>
+</tr>
+<?php
+        $cnt = $cnt + 1;
+    }
+} else {
+?>
+<tr>
     <td colspan="8"> No record found against this search</td>
+</tr>
+<?php
+}
+?>
 
-  </tr>
-  <?php } }?>
                         </tbody>
                       </table>
                     </div>
@@ -191,4 +198,4 @@ $cnt=$cnt+1;
     <script src="./js/dashboard.js"></script>
     <!-- End custom js for this page -->
   </body>
-</html><?php }  ?>
+</html><?php  } ?>

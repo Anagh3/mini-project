@@ -53,12 +53,11 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
                     <div class="row report-inner-cards-wrapper">
                       <div class=" col-md -6 col-xl report-inner-card">
                         <div class="inner-card-text">
-                           <?php 
-                        $sql1 ="SELECT * from  tblclass";
-$query1 = $dbh -> prepare($sql1);
-$query1->execute();
-$results1=$query1->fetchAll(PDO::FETCH_OBJ);
-$totclass=$query1->rowCount();
+                        <?php
+$sql1 = "SELECT * FROM tblclass";
+$query1 = mysqli_query($conn, $sql1);
+$results1 = mysqli_fetch_all($query1, MYSQLI_ASSOC);
+$totclass = mysqli_num_rows($query1);
 ?>
                           <span class="report-title">Total Class</span>
                           <h4><?php echo htmlentities($totclass);?></h4>
@@ -70,12 +69,11 @@ $totclass=$query1->rowCount();
                       </div>
                       <div class="col-md-6 col-xl report-inner-card">
                         <div class="inner-card-text">
-                          <?php 
-                        $sql2 ="SELECT * from  tblstudent";
-$query2 = $dbh -> prepare($sql2);
-$query2->execute();
-$results2=$query2->fetchAll(PDO::FETCH_OBJ);
-$totstu=$query2->rowCount();
+                        <?php
+$sql2 = "SELECT * FROM tblstudent";
+$query2 = mysqli_query($conn, $sql2);
+$results2 = mysqli_fetch_all($query2, MYSQLI_ASSOC);
+$totstu = mysqli_num_rows($query2);
 ?>
                           <span class="report-title">Total Students</span>
                           <h4><?php echo htmlentities($totstu);?></h4>
@@ -87,12 +85,11 @@ $totstu=$query2->rowCount();
                       </div>
                       <div class="col-md-6 col-xl report-inner-card">
                         <div class="inner-card-text">
-                          <?php 
-                        $sql3 ="SELECT * from  tblnotice";
-$query3 = $dbh -> prepare($sql3);
-$query3->execute();
-$results3=$query3->fetchAll(PDO::FETCH_OBJ);
-$totnotice=$query3->rowCount();
+                        <?php
+$sql3 = "SELECT * FROM tblnotice";
+$query3 = mysqli_query($conn, $sql3);
+$results3 = mysqli_fetch_all($query3, MYSQLI_ASSOC);
+$totnotice = mysqli_num_rows($query3);
 ?>
                           <span class="report-title">Total Class Notice</span>
                           <h4><?php echo htmlentities($totnotice);?></h4>
@@ -104,12 +101,11 @@ $totnotice=$query3->rowCount();
                       </div>
                       <div class="col-md-6 col-xl report-inner-card">
                         <div class="inner-card-text">
-                          <?php 
-                        $sql4 ="SELECT * from  tblpublicnotice";
-$query4 = $dbh -> prepare($sql4);
-$query4->execute();
-$results4=$query4->fetchAll(PDO::FETCH_OBJ);
-$totpublicnotice=$query4->rowCount();
+                        <?php
+$sql4 = "SELECT * FROM tblpublicnotice";
+$query4 = mysqli_query($conn, $sql4);
+$results4 = mysqli_fetch_all($query4, MYSQLI_ASSOC);
+$totpublicnotice = mysqli_num_rows($query4);
 ?>
                           <span class="report-title">Total Public Notice</span>
                           <h4><?php echo htmlentities($totpublicnotice);?></h4>

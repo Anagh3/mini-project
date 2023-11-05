@@ -37,7 +37,7 @@ echo '<script>alert("Your current password is wrong")</script>';
 <html lang="en">
   <head>
    
-    <title>Student Academics Management System|| Student Change Password</title>
+    <title>Student  Management System|| Student Change Password</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -98,6 +98,7 @@ return true;
                         <label for="exampleInputName1">Current Password</label>
                         <input type="password" name="currentpassword" id="currentpassword" class="form-control" required="true">
                       </div>
+                      <div class="form-group">
                         <label for="exampleInputEmail3">New Password</label>
                         <input type="password" name="newpassword"  class="form-control" required="true">
                       </div>

@@ -1,30 +1,29 @@
+
 <?php
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid']==0)) {
   header('location:logout.php');
-  } else{
-   if(isset($_POST['submit']))
+} else{
+  if(isset($_POST['submit']))
   {
- $cname=$_POST['cname'];
- $section=$_POST['section'];
-$sql="insert into tblclass(ClassName,Section)values(:cname,:section)";
-$query=$dbh->prepare($sql);
-$query->bindParam(':cname',$cname,PDO::PARAM_STR);
-$query->bindParam(':section',$section,PDO::PARAM_STR);
- $query->execute();
-   $LastInsertId=$dbh->lastInsertId();
-   if ($LastInsertId>0) {
-    echo '<script>alert("Class has been added.")</script>';
-echo "<script>window.location.href ='add-class.php'</script>";
-  }
-  else
-    {
-         echo '<script>alert("Something Went Wrong. Please try again")</script>';
+    $cname=$_POST['cname'];
+    $section=$_POST['section'];
+
+    $sql="insert into tblclass(ClassName,Section)values('$cname','$section')";
+    $query=mysqli_query($conn, $sql);
+    $LastInsertId=mysqli_insert_id($conn);
+    if ($LastInsertId>0) {
+      echo '<script>alert("Class has been added.")</script>';
+      echo "<script>window.location.href ='add-class.php'</script>";
+    } else {
+      echo '<script>alert("Something Went Wrong. Please try again")</script>';
     }
+  }
 }
-  ?>
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -124,4 +123,4 @@ echo "<script>window.location.href ='add-class.php'</script>";
     <script src="js/select2.js"></script>
     <!-- End custom js for this page -->
   </body>
-</html><?php }  ?>
+</html><?php  ?>

@@ -3,36 +3,36 @@ session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
 error_reporting(0);
-if (strlen($_SESSION['sturecmsaid']==0)) {
-  header('location:logout.php');
-  } else{
-if(isset($_POST['submit']))
-{
-$adminid=$_SESSION['sturecmsaid'];
-$cpassword=md5($_POST['currentpassword']);
-$newpassword=md5($_POST['newpassword']);
-$sql ="SELECT ID FROM tbladmin WHERE ID=:adminid and Password=:cpassword";
-$query= $dbh -> prepare($sql);
-$query-> bindParam(':adminid', $adminid, PDO::PARAM_STR);
-$query-> bindParam(':cpassword', $cpassword, PDO::PARAM_STR);
-$query-> execute();
-$results = $query -> fetchAll(PDO::FETCH_OBJ);
 
-if($query -> rowCount() > 0)
-{
-$con="update tbladmin set Password=:newpassword where ID=:adminid";
-$chngpwd1 = $dbh->prepare($con);
-$chngpwd1-> bindParam(':adminid', $adminid, PDO::PARAM_STR);
-$chngpwd1-> bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
-$chngpwd1->execute();
-
-echo '<script>alert("Your password successully changed")</script>';
+if (strlen($_SESSION['sturecmsaid']) == 0) {
+    header('location:logout.php');
 } else {
-echo '<script>alert("Your current password is wrong")</script>';
+    if (isset($_POST['submit'])) {
+        $adminid = $_SESSION['sturecmsaid'];
+        $cpassword = md5($_POST['currentpassword']);
+        $newpassword = md5($_POST['newpassword']);
+        
 
+        $sql = "SELECT ID FROM tbladmin WHERE ID='$adminid' AND Password='$cpassword'";
+        $query = mysqli_query($conn, $sql);
+
+        if (mysqli_num_rows($query) > 0) {
+            $con = "UPDATE tbladmin SET Password='$newpassword' WHERE ID='$adminid'";
+            $chngpwd1 = mysqli_query($conn, $con);
+            
+            if ($chngpwd1) {
+                echo '<script>alert("Your password successfully changed")</script>';
+            } else {
+                echo '<script>alert("Error updating password")</script>';
+            }
+        } else {
+            echo '<script>alert("Your current password is wrong")</script>';
+        }
+        mysqli_close($conn);
+    }
 }
-}
-  ?>
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -141,4 +141,4 @@ return true;
     <script src="js/select2.js"></script>
     <!-- End custom js for this page -->
   </body>
-</html><?php }  ?>
+</html><?php   ?>

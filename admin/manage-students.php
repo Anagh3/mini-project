@@ -9,14 +9,15 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
 if(isset($_GET['delid']))
 {
 $rid=intval($_GET['delid']);
-$sql="delete from tblstudent where ID=:rid";
-$query=$dbh->prepare($sql);
-$query->bindParam(':rid',$rid,PDO::PARAM_STR);
-$query->execute();
+$sql="delete from tblstudent where ID=$rid";
+$query=$conn->query($sql);
+if($query) {
  echo "<script>alert('Data deleted');</script>"; 
   echo "<script>window.location.href = 'manage-students.php'</script>";     
-
-
+} else {
+ echo "<script>alert('Something went wrong');</script>"; 
+  echo "<script>window.location.href = 'manage-students.php'</script>";     
+}
 }
 ?>
 <!DOCTYPE html>
@@ -83,44 +84,59 @@ $query->execute();
                           </tr>
                         </thead>
                         <tbody>
-                           <?php
-                            if (isset($_GET['pageno'])) {
-            $pageno = $_GET['pageno'];
-        } else {
-            $pageno = 1;
-        }
-        // Formula for pagination
-        $no_of_records_per_page = 15;
-        $offset = ($pageno-1) * $no_of_records_per_page;
-       $ret = "SELECT ID FROM tblstudent";
-$query1 = $dbh -> prepare($ret);
-$query1->execute();
-$results1=$query1->fetchAll(PDO::FETCH_OBJ);
-$total_rows=$query1->rowCount();
-$total_pages = ceil($total_rows / $no_of_records_per_page);
-$sql="SELECT tblstudent.StuID,tblstudent.ID as sid,tblstudent.StudentName,tblstudent.StudentEmail,tblstudent.DateofAdmission,tblclass.ClassName,tblclass.Section from tblstudent join tblclass on tblclass.ID=tblstudent.StudentClass LIMIT $offset, $no_of_records_per_page";
-$query = $dbh -> prepare($sql);
-$query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
+                        <?php
+if (isset($_GET['pageno'])) {
+  $pageno = $_GET['pageno'];
+} else {
+  $pageno = 1;
+}
 
-$cnt=1;
-if($query->rowCount() > 0)
-{
-foreach($results as $row)
-{               ?>   
-                          <tr>
-                           
-                            <td><?php echo htmlentities($cnt);?></td>
-                            <td><?php  echo htmlentities($row->StuID);?></td>
-                            <td><?php  echo htmlentities($row->ClassName);?> <?php  echo htmlentities($row->Section);?></td>
-                            <td><?php  echo htmlentities($row->StudentName);?></td>
-                            <td><?php  echo htmlentities($row->StudentEmail);?></td>
-                            <td><?php  echo htmlentities($row->DateofAdmission);?></td>
-                            <td>
-                              <div><a href="edit-student-detail.php?editid=<?php echo htmlentities ($row->sid);?>"><i class="icon-eye"></i></a>
-                                                || <a href="manage-students.php?delid=<?php echo ($row->sid);?>" onclick="return confirm('Do you really want to Delete ?');"> <i class="icon-trash"></i></a></div>
-                            </td> 
-                          </tr><?php $cnt=$cnt+1;}} ?>
+// Formula for pagination
+$no_of_records_per_page = 15;
+$offset = ($pageno-1) * $no_of_records_per_page;
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+
+// Get the total number of rows
+$sql = "SELECT COUNT(*) FROM tblstudent";
+$result = $conn->query($sql);
+$total_rows = $result->fetch_row()[0];
+
+// Calculate the total number of pages
+$total_pages = ceil($total_rows / $no_of_records_per_page);
+
+// Get the students for the current page
+$sql = "SELECT tblstudent.StuID,tblstudent.ID as sid,tblstudent.StudentName,tblstudent.StudentEmail,tblstudent.DateofAdmission,tblclass.ClassName,tblclass.Section FROM tblstudent JOIN tblclass ON tblclass.ID=tblstudent.StudentClass LIMIT $offset, $no_of_records_per_page";
+$result = $conn->query($sql);
+
+$cnt = 1;
+if ($result->num_rows > 0) {
+  while ($row = $result->fetch_assoc()) {
+?>
+    <tr>
+      <td><?php echo htmlentities($cnt); ?></td>
+      <td><?php echo htmlentities($row['StuID']); ?></td>
+      <td><?php echo htmlentities($row['ClassName']); ?> <?php echo htmlentities($row['Section']); ?></td>
+      <td><?php echo htmlentities($row['StudentName']); ?></td>
+      <td><?php echo htmlentities($row['StudentEmail']); ?></td>
+      <td><?php echo htmlentities($row['DateofAdmission']); ?></td>
+      <td>
+        <div><a href="edit-student-detail.php?editid=<?php echo htmlentities($row['sid']); ?>"><i class="icon-eye"></i></a> || <a href="manage-students.php?delid=<?php echo $row['sid']; ?>" onclick="return confirm('Do you really want to Delete ?');"> <i class="icon-trash"></i></a></div>
+      </td>
+    </tr>
+<?php
+    $cnt++;
+  }
+}
+
+// Close the connection
+?>
                         </tbody>
                       </table>
                     </div>
@@ -143,7 +159,8 @@ foreach($results as $row)
           </div>
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
-         <?php include_once('includes/footer.php');?>
+         <?php include_once('includes/footer.php');
+         ?>
           <!-- partial -->
         </div>
         <!-- main-panel ends -->

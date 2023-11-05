@@ -4,23 +4,21 @@ error_reporting(0);
 include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid']==0)) {
   header('location:logout.php');
-  } else{
-   if(isset($_POST['submit']))
+} else{
+  if(isset($_POST['submit']))
   {
- $cname=$_POST['cname'];
- $section=$_POST['section'];
- $eid=$_GET['editid'];
+    $cname=$_POST['cname'];
+    $section=$_POST['section'];
+    $eid=$_GET['editid'];
 
-$sql="update tblclass set ClassName=:cname,Section=:section where ID=:eid";
-$query=$dbh->prepare($sql);
-$query->bindParam(':cname',$cname,PDO::PARAM_STR);
-$query->bindParam(':section',$section,PDO::PARAM_STR);
-$query->bindParam(':eid',$eid,PDO::PARAM_STR);
- $query->execute();
-  echo '<script>alert("Class has been updated")</script>';
+    $sql="update tblclass set ClassName='$cname',Section='$section' where ID='$eid'";
+    $query=mysqli_query($conn, $sql);
+    echo '<script>alert("Class has been updated")</script>';
+  }
+
 }
+?>
 
-  ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -69,25 +67,25 @@ $query->bindParam(':eid',$eid,PDO::PARAM_STR);
                     <h4 class="card-title" style="text-align: center;">Manage Class</h4>
                    
                     <form class="forms-sample" method="post">
-                      <?php
+                    <?php
 $eid=$_GET['editid'];
-$sql="SELECT * from  tblclass where ID=$eid";
-$query = $dbh -> prepare($sql);
-$query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
+$sql="SELECT * from tblclass where ID=$eid";
+$query=mysqli_query($conn, $sql);
+$results=mysqli_fetch_all($query, MYSQLI_ASSOC);
 $cnt=1;
-if($query->rowCount() > 0)
+if(mysqli_num_rows($query) > 0)
 {
 foreach($results as $row)
-{               ?>  
+{ ?>
+
                       <div class="form-group">
                         <label for="exampleInputName1">Class Name</label>
-                        <input type="text" name="cname" value="<?php  echo htmlentities($row->ClassName);?>" class="form-control" required='true'>
+                        <input type="text" name="cname" value="<?php  echo htmlentities($row['ClassName']);?>" class="form-control" required='true'>
                       </div>
                       <div class="form-group">
                         <label for="exampleInputEmail3">Section</label>
                         <select  name="section" class="form-control" required='true'>
-                          <option value="<?php  echo htmlentities($row->Section);?>"><?php  echo htmlentities($row->Section);?></option>
+                          <option value="<?php  echo htmlentities($row['Section']);?>"><?php  echo htmlentities($row['Section']);?></option>
                           <option value="A">A</option>
                           <option value="B">B</option>
                           <option value="C">C</option>
@@ -130,4 +128,4 @@ foreach($results as $row)
     <script src="js/select2.js"></script>
     <!-- End custom js for this page -->
   </body>
-</html><?php }  ?>
+</html><?php  ?>

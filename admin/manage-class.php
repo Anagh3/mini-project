@@ -4,21 +4,19 @@ error_reporting(0);
 include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid']==0)) {
   header('location:logout.php');
-  } else{
-   // Code for deletion
-if(isset($_GET['delid']))
-{
-$rid=intval($_GET['delid']);
-$sql="delete from tblclass where ID=:rid";
-$query=$dbh->prepare($sql);
-$query->bindParam(':rid',$rid,PDO::PARAM_STR);
-$query->execute();
- echo "<script>alert('Data deleted');</script>"; 
-  echo "<script>window.location.href = 'manage-class.php'</script>";     
-
-
+} else{
+  // Code for deletion
+  if(isset($_GET['delid']))
+  {
+    $rid=intval($_GET['delid']);
+    $sql="delete from tblclass where ID='$rid'";
+    $query=mysqli_query($conn, $sql);
+    echo "<script>alert('Data deleted');</script>"; 
+    echo "<script>window.location.href = 'manage-class.php'</script>"; 
+  }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -81,42 +79,46 @@ $query->execute();
                           </tr>
                         </thead>
                         <tbody>
-                           <?php
-                           if (isset($_GET['pageno'])) {
-            $pageno = $_GET['pageno'];
-        } else {
-            $pageno = 1;
-        }
-        // Formula for pagination
-        $no_of_records_per_page =15;
-        $offset = ($pageno-1) * $no_of_records_per_page;
-       $ret = "SELECT ID FROM tblclass";
-$query1 = $dbh -> prepare($ret);
-$query1->execute();
-$results1=$query1->fetchAll(PDO::FETCH_OBJ);
-$total_rows=$query1->rowCount();
+                        <?php
+session_start();
+error_reporting(0);
+include('includes/dbconnection.php');
+if (isset($_GET['pageno'])) {
+  $pageno = $_GET['pageno'];
+} else {
+  $pageno = 1;
+}
+
+// Formula for pagination
+$no_of_records_per_page = 15;
+$offset = ($pageno-1) * $no_of_records_per_page;
+
+$ret = "SELECT ID FROM tblclass";
+$query1 = mysqli_query($conn, $ret);
+$results1 = mysqli_fetch_all($query1, MYSQLI_ASSOC);
+$total_rows = mysqli_num_rows($query1);
 $total_pages = ceil($total_rows / $no_of_records_per_page);
-$sql="SELECT * from tblclass LIMIT $offset, $no_of_records_per_page";
-$query = $dbh -> prepare($sql);
-$query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
+
+$sql = "SELECT * FROM tblclass LIMIT $offset, $no_of_records_per_page";
+$query = mysqli_query($conn, $sql);
+$results = mysqli_fetch_all($query, MYSQLI_ASSOC);
 
 $cnt=1;
-if($query->rowCount() > 0)
+if(mysqli_num_rows($query) > 0)
 {
 foreach($results as $row)
-{               ?>   
-                          <tr>
-                           
-                            <td><?php echo htmlentities($cnt);?></td>
-                            <td><?php  echo htmlentities($row->ClassName);?></td>
-                            <td><?php  echo htmlentities($row->Section);?></td>
-                            <td><?php  echo htmlentities($row->CreationDate);?></td>
-                            <td>
-                              <div><a href="edit-class-detail.php?editid=<?php echo htmlentities ($row->ID);?>"><i class="icon-eye"></i></a>
-                                                || <a href="manage-class.php?delid=<?php echo ($row->ID);?>" onclick="return confirm('Do you really want to Delete ?');"> <i class="icon-trash"></i></a></div>
-                            </td> 
-                          </tr><?php $cnt=$cnt+1;}} ?>
+{ ?>
+<tr>
+ <td><?php echo htmlentities($cnt);?></td>
+ <td><?php echo htmlentities($row['ClassName']);?></td>
+ <td><?php echo htmlentities($row['Section']);?></td>
+<td><?php echo htmlentities($row['CreationDate']);?></td>
+ <td>
+ <div><a href="edit-class-detail.php?editid=<?php echo htmlentities ($row['ID']);?>"><i class="icon-eye"></i></a>
+ || <a href="manage-class.php?delid=<?php echo ($row['ID']);?>" onclick="return confirm('Do you really want to Delete ?');"> <i class="icon-trash"></i></a></div>
+ </td> 
+</tr><?php $cnt=$cnt+1;}} ?>
+
                         </tbody>
                       </table>
                     </div>
@@ -164,4 +166,4 @@ foreach($results as $row)
     <script src="./js/dashboard.js"></script>
     <!-- End custom js for this page -->
   </body>
-</html><?php }  ?>
+</html><?php   ?>
