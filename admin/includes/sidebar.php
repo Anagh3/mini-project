@@ -49,6 +49,18 @@ foreach($results as $row)
               </div>
             </li>
             <li class="nav-item">
+              <a class="nav-link" data-toggle="collapse" href="#auth4" aria-expanded="false" aria-controls="auth">
+                <span class="menu-title">Subject</span>
+                <i class="icon-layers menu-icon"></i>
+              </a>
+            <div class="collapse" id="auth4">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"> <a class="nav-link" href="add_subject.php">Add Subject</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="manage_subject.php">Manage Subject</a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#ui-basic1" aria-expanded="false" aria-controls="ui-basic1">
                 <span class="menu-title">Students</span>
                 <i class="icon-people menu-icon"></i>
@@ -60,6 +72,20 @@ foreach($results as $row)
                 </ul>
               </div>
             </li>
+
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="collapse" href="#auth3" aria-expanded="false" aria-controls="auth">
+                <span class="menu-title">Teacher</span>
+                <i class="icon-doc menu-icon"></i>
+              </a>
+              <div class="collapse" id="auth3">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"> <a class="nav-link" href="add-teacher.php"> Add Teacher </a></li>
+                  <li class="nav-item"> <a class="nav-link" href="manage-teacher.php"> Manage Teacher </a></li>
+                </ul>
+              </div>
+            </li>
+
             <li class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
                 <span class="menu-title">Notice</span>
@@ -72,6 +98,8 @@ foreach($results as $row)
                 </ul>
               </div>
             </li>
+            
+
             <li class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#auth1" aria-expanded="false" aria-controls="auth">
                 <span class="menu-title">Public Notice</span>

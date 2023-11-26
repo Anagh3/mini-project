@@ -19,7 +19,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
     $altconnum = $_POST['altconnum'];
     $address = $_POST['address'];
     $uname = $_POST['uname'];
-    $password = $_POST['password'];
+    $password = md5($_POST['password']);
 
     // Check if an image was uploaded
     if (isset($_FILES['image'])) {
@@ -41,8 +41,15 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
         $stmt = $conn->prepare($sql);
         $stmt->bind_param('ssssssssssssss', $stuname, $stuemail, $stuclass, $gender, $dob, $stuid, $fname, $mname, $connum, $altconnum, $address, $uname, $password, $image);
         $result = $stmt->execute();
+        $studentid = $stmt->insert_id;
 
-        if ($result) {
+        // Insert into tblteacherlogin
+        $sql1 = "INSERT INTO tblstudentlogin (ID, username, password) VALUES (?, ?, ?)";
+        $stmt1 = $conn->prepare($sql1);
+        $stmt1->bind_param("iss",  $studentid , $uname, $password);
+        $stmt1->execute();
+
+        if ($stmt1->affected_rows > 0) {
           echo '<script>alert("Student has been added.")</script>';
           echo "<script>window.location.href = 'add-students.php'</script>";
         } else {

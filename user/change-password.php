@@ -3,36 +3,28 @@ session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
 
-if (strlen($_SESSION['sturecmsstuid']==0)) {
-  header('location:logout.php');
-  } else{
-if(isset($_POST['submit']))
-{
-$sid=$_SESSION['sturecmsstuid'];
-$cpassword=md5($_POST['currentpassword']);
-$newpassword=md5($_POST['newpassword']);
-$sql ="SELECT StuID FROM tblstudent WHERE StuID=:sid and Password=:cpassword";
-$query= $dbh -> prepare($sql);
-$query-> bindParam(':sid', $sid, PDO::PARAM_STR);
-$query-> bindParam(':cpassword', $cpassword, PDO::PARAM_STR);
-$query-> execute();
-$results = $query -> fetchAll(PDO::FETCH_OBJ);
-
-if($query -> rowCount() > 0)
-{
-$con="update tblstudent set Password=:newpassword where StuID=:sid";
-$chngpwd1 = $dbh->prepare($con);
-$chngpwd1-> bindParam(':sid', $sid, PDO::PARAM_STR);
-$chngpwd1-> bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
-$chngpwd1->execute();
-
-echo '<script>alert("Your password successully changed")</script>';
+if (strlen($_SESSION['sturecmsstuid']) == 0) {
+    header('location:logout.php');
 } else {
-echo '<script>alert("Your current password is wrong")</script>';
+    if (isset($_POST['submit'])) {
+        $sid = $_SESSION['sturecmsstuid'];
+        $cpassword = md5($_POST['currentpassword']);
+        $newpassword = md5($_POST['newpassword']);
+        $sql = "SELECT StuID FROM tblstudent WHERE StuID='$sid' and Password='$cpassword'";
+        $query = mysqli_query($dbh, $sql);
+        $results = mysqli_fetch_assoc($query);
 
+        if ($results > 0) {
+            $con = "update tblstudent set Password='$newpassword' where StuID='$sid'";
+            $chngpwd1 = mysqli_query($dbh, $con);
+
+            echo '<script>alert("Your password successfully changed")</script>';
+        } else {
+            echo '<script>alert("Your current password is wrong")</script>';
+        }
+    }
 }
-}
-  ?>
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>

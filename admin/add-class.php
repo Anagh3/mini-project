@@ -79,14 +79,7 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
                       </div>
                       <div class="form-group">
                         <label for="exampleInputEmail3">Section</label>
-                        <select  name="section" class="form-control" required='true'>
-                          <option value="">Choose Section</option>
-                          <option value="A">A</option>
-                          <option value="B">B</option>
-                          <option value="C">C</option>
-                          <option value="D">D</option>
-                          <option value="E">E</option>
-                          <option value="F">F</option>
+                        <input type="text" name="section" value="" class="form-control" required='true'>
                         </select>
                       </div>
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Add</button>

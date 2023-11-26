@@ -11,7 +11,7 @@ if (empty($_SESSION['sturecmsaid']))
         $nottitle = $_POST['nottitle'];
         $classid = $_POST['classid'];
         $notmsg = $_POST['notmsg'];
-        $conn = mysqli_connect("localhost", "root", "", "studentmsdb");
+        
         
         $sql = "INSERT INTO tblnotice (NoticeTitle, ClassId, NoticeMsg) VALUES ('$nottitle', '$classid', '$notmsg')";
         $query = mysqli_query($conn, $sql);

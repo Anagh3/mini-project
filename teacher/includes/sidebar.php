@@ -9,7 +9,7 @@
                 <div class="text-wrapper">
                 <?php
 $aid= $_SESSION['sturecmsaid'];
-$sql="SELECT * from tbladmin where ID='$aid'";
+$sql="SELECT * from tblteacher where ID='$aid'";
 
 $query = mysqli_query($conn, $sql);
 $results = mysqli_fetch_all($query, MYSQLI_ASSOC);
@@ -20,8 +20,8 @@ if(count($results) > 0)
 foreach($results as $row)
 {
 ?>
-<p class="profile-name"><?php echo htmlentities($row['AdminName']); ?></p>
-<p class="designation"><?php echo htmlentities($row['Email']); ?></p><?php $cnt=$cnt+1;}} ?>
+<p class="profile-name"><?php echo htmlentities($row['name']); ?></p>
+<p class="designation"><?php echo htmlentities($row['email']); ?></p><?php $cnt=$cnt+1;}} ?>
 </div>
                
               </a>
@@ -35,30 +35,6 @@ foreach($results as $row)
                 <i class="icon-screen-desktop menu-icon"></i>
               </a>
             </li>
-            
-            <li class="nav-item">
-              <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-                <span class="menu-title">Class</span>
-                <i class="icon-layers menu-icon"></i>
-              </a>
-              <div class="collapse" id="ui-basic">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="add-class.php">Add Class</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="manage-class.php">Manage Class</a></li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-toggle="collapse" href="#ui-basic1" aria-expanded="false" aria-controls="ui-basic1">
-                <span class="menu-title">Students</span>
-                <i class="icon-people menu-icon"></i>
-              </a>
-              <div class="collapse" id="ui-basic1">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="add-students.php">Add Students</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="manage-students.php">Manage Students</a></li>
-                </ul>
-              </div>
             </li>
             <li class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
@@ -72,38 +48,16 @@ foreach($results as $row)
                 </ul>
               </div>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" data-toggle="collapse" href="#auth1" aria-expanded="false" aria-controls="auth">
-                <span class="menu-title">Public Notice</span>
-                <i class="icon-doc menu-icon"></i>
-              </a>
-              <div class="collapse" id="auth1">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="add-public-notice.php"> Add Public Notice </a></li>
-                  <li class="nav-item"> <a class="nav-link" href="manage-public-notice.php"> Manage Public Notice </a></li>
-                </ul>
-              </div>
+              
               <li class="nav-item">
-              <a class="nav-link" data-toggle="collapse" href="#auth2" aria-expanded="false" aria-controls="auth">
-                <span class="menu-title">Pages</span>
-                <i class="icon-doc menu-icon"></i>
-              </a>
-              <div class="collapse" id="auth2">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="about-us.php"> About Us </a></li>
-                  <li class="nav-item"> <a class="nav-link" href="contact-us.php"> Contact Us </a></li>
-                </ul>
-              </div>
-            </li>
-              <li class="nav-item">
-              <a class="nav-link" href="between-dates-reports.php">
-                <span class="menu-title">Reports</span>
+              <a class="nav-link" href="add_attendance.php">
+                <span class="menu-title">Attendance</span>
                 <i class="icon-notebook menu-icon"></i>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="search.php">
-                <span class="menu-title">Search</span>
+              <a class="nav-link" href="addnotes.php">
+                <span class="menu-title">Notes</span>
                 <i class="icon-magnifier menu-icon"></i>
               </a>
             </li>

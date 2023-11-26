@@ -3,45 +3,40 @@ session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
 
-if(isset($_POST['login'])) 
-  {
-    $stuid=$_POST['stuid'];
-    $password=md5($_POST['password']);
-    $sql ="SELECT StuID,ID,StudentClass FROM tblstudent WHERE (UserName=:stuid || StuID=:stuid) and Password=:password";
-    $query=$dbh->prepare($sql);
-    $query-> bindParam(':stuid', $stuid, PDO::PARAM_STR);
-$query-> bindParam(':password', $password, PDO::PARAM_STR);
-    $query-> execute();
-    $results=$query->fetchAll(PDO::FETCH_OBJ);
-    if($query->rowCount() > 0)
-{
-foreach ($results as $result) {
-$_SESSION['sturecmsstuid']=$result->StuID;
-$_SESSION['sturecmsuid']=$result->ID;
-$_SESSION['stuclass']=$result->StudentClass;
-}
+if (isset($_POST['login'])) {
+    $stuid = $_POST['stuid'];
+    $password = md5($_POST['password']);
+    $sql = "SELECT * FROM tblstudent WHERE (UserName='$stuid' OR StuID='$stuid') AND Password='$password'";
+    $query = mysqli_query($conn, $sql);
+    $rows = mysqli_num_rows($query);
 
-  if(!empty($_POST["remember"])) {
-//COOKIES for username
-setcookie ("user_login",$_POST["stuid"],time()+ (10 * 365 * 24 * 60 * 60));
-//COOKIES for password
-setcookie ("userpassword",$_POST["password"],time()+ (10 * 365 * 24 * 60 * 60));
-} else {
-if(isset($_COOKIE["user_login"])) {
-setcookie ("user_login","");
-if(isset($_COOKIE["userpassword"])) {
-setcookie ("userpassword","");
+    if ($rows > 0) {
+        while ($result = mysqli_fetch_assoc($query)) {
+            $_SESSION['sturecmsstuid'] = $result['StuID'];
+            $_SESSION['sturecmsuid'] = $result['ID'];
+            $_SESSION['stuclass'] = $result['StudentClass'];
         }
-      }
+        if (!empty($_POST["remember"])) {
+            // COOKIES for username
+            setcookie("user_login", $_POST["stuid"], time() + (10 * 365 * 24 * 60 * 60));
+            // COOKIES for password
+            setcookie("userpassword", $_POST["password"], time() + (10 * 365 * 24 * 60 * 60));
+        } else {
+            if (isset($_COOKIE["user_login"])) {
+                setcookie("user_login", "");
+                if (isset($_COOKIE["userpassword"])) {
+                    setcookie("userpassword", "");
+                }
+            }
+        }
+        $_SESSION['login'] = $_POST['stuid'];
+        echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
+    } else {
+        echo "<script>alert('Invalid Details');</script>";
+    }
 }
-$_SESSION['login']=$_POST['stuid'];
-echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
-} else{
-echo "<script>alert('Invalid Details');</script>";
-}
-}
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -70,8 +65,8 @@ echo "<script>alert('Invalid Details');</script>";
                 <div class="brand-logo">
                   <img src="images/logo.svg"> SMS
                 </div>
-                <h4>Hello! let's get started</h4>
-                <h6 class="font-weight-light">Sign in to continue.</h6>
+                <h4>Student Login</h4>
+                <h6 class="font-weight-light">Hello! let's get started</h6>
                 <form class="pt-3" id="login" method="post" name="login">
                   <div class="form-group">
                     <input type="text" class="form-control form-control-lg" placeholder="enter your student id or username" required="true" name="stuid" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >

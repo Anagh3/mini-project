@@ -39,7 +39,7 @@ if(isset($_POST['login']))
 <!DOCTYPE html>
 <html lang="en">
  <head>
-  <title>Student  Management System|| Login Page</title>
+  <title>Student  Management System|| ADMIN Login Page</title>
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -56,8 +56,8 @@ if(isset($_POST['login']))
                 <div class="brand-logo">
                   <img src="images/logo.svg">
                 </div>
-                <h4>Hello! let's get started</h4>
-                <h6 class="font-weight-light">Sign in to continue.</h6>
+                <h4>Admin Login</h4>
+                <h6 class="font-weight-light">Hello! let's get started</h6>
                 <form class="pt-3" id="login" method="post" name="login">
                   <div class="form-group">
                     <input type="text" class="form-control form-control-lg" placeholder="enter your username" required="true" name="username" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
@@ -86,19 +86,11 @@ if(isset($_POST['login']))
             </div>
           </div>
         </div>
-        <!-- content-wrapper ends -->
+   
       </div>
-      <!-- page-body-wrapper ends -->
     </div>
-    <!-- container-scroller -->
-    <!-- plugins:js -->
     <script src="vendors/js/vendor.bundle.base.js"></script>
-    <!-- endinject -->
-    <!-- Plugin js for this page -->
-    <!-- End plugin js for this page -->
-    <!-- inject:js -->
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
-    <!-- endinject -->
   </body>
 </html>

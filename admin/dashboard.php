@@ -120,8 +120,10 @@ $totpublicnotice = mysqli_num_rows($query4);
                 </div>
               </div>
             </div>
-           
+
             
+           
+          
           </div>
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->

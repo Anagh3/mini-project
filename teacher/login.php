@@ -7,13 +7,15 @@ if(isset($_POST['login']))
 {
   $username=$_POST['username'];
   $password=$_POST['password'];
-  $sql ="SELECT id FROM teacher_login WHERE name='$username' and Password='$password'";
+  $sql ="select id from tblteacherlogin WHERE username='$username' and password='$password'";
   $query = mysqli_query($conn, $sql);
   $results = mysqli_fetch_all($query, MYSQLI_ASSOC);
   if(mysqli_num_rows($query) > 0)
   {
     foreach ($results as $result) {
-      $_SESSION['sturecmsaid']=$result['ID'];
+      echo $result['id']; 
+
+      $_SESSION['sturecmsaid']=$result['id'];
     }
 
     if(!empty($_POST["remember"])) {

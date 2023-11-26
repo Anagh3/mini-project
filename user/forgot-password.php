@@ -3,33 +3,29 @@ session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
 
-if(isset($_POST['submit']))
-  {
-    $email=$_POST['email'];
-$mobile=$_POST['mobile'];
-$newpassword=md5($_POST['newpassword']);
-  $sql ="SELECT StudentEmail FROM tblstudent WHERE StudentEmail=:email and ContactNumber=:mobile";
-$query= $dbh -> prepare($sql);
-$query-> bindParam(':email', $email, PDO::PARAM_STR);
-$query-> bindParam(':mobile', $mobile, PDO::PARAM_STR);
-$query-> execute();
-$results = $query -> fetchAll(PDO::FETCH_OBJ);
-if($query -> rowCount() > 0)
-{
-$con="update tblstudent set Password=:newpassword where StudentEmail=:email and ContactNumber=:mobile";
-$chngpwd1 = $dbh->prepare($con);
-$chngpwd1-> bindParam(':email', $email, PDO::PARAM_STR);
-$chngpwd1-> bindParam(':mobile', $mobile, PDO::PARAM_STR);
-$chngpwd1-> bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
-$chngpwd1->execute();
-echo "<script>alert('Your Password succesfully changed');</script>";
-}
-else {
-echo "<script>alert('Email id or Mobile no is invalid');</script>"; 
-}
-}
+if (isset($_POST['submit'])) {
+    $email = $_POST['email'];
+    $mobile = $_POST['mobile'];
+    $newpassword = md5($_POST['newpassword']);
 
+    $sql = "SELECT StudentEmail FROM tblstudent WHERE StudentEmail='$email' and ContactNumber='$mobile'";
+    $query = mysqli_query($dbh, $sql);
+    $count = mysqli_num_rows($query);
+
+    if ($count > 0) {
+        $con = "UPDATE tblstudent SET Password='$newpassword' WHERE StudentEmail='$email' and ContactNumber='$mobile'";
+        $chngpwd1 = mysqli_query($dbh, $con);
+        if ($chngpwd1) {
+            echo "<script>alert('Your Password has been changed successfully');</script>";
+        } else {
+            echo "<script>alert('Password not updated. Please try again.');</script>";
+        }
+    } else {
+        echo "<script>alert('Email id or Mobile no is invalid');</script>";
+    }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>

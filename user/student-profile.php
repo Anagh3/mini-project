@@ -54,65 +54,55 @@ if (strlen($_SESSION['sturecmsstuid']==0)) {
                   <div class="card-body">
                     
                     <table border="1" class="table table-bordered mg-b-0">
-                      <?php
-$sid=$_SESSION['sturecmsstuid'];
-$sql="SELECT tblstudent.StudentName,tblstudent.StudentEmail,tblstudent.StudentClass,tblstudent.Gender,tblstudent.DOB,tblstudent.StuID,tblstudent.FatherName,tblstudent.MotherName,tblstudent.ContactNumber,tblstudent.AltenateNumber,tblstudent.Address,tblstudent.UserName,tblstudent.Password,tblstudent.Image,tblstudent.DateofAdmission,tblclass.ClassName,tblclass.Section from tblstudent join tblclass on tblclass.ID=tblstudent.StudentClass where tblstudent.StuID=:sid";
-$query = $dbh -> prepare($sql);
-$query->bindParam(':sid',$sid,PDO::PARAM_STR);
-$query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
-$cnt=1;
-if($query->rowCount() > 0)
-{
-foreach($results as $row)
-{               ?>
- <tr align="center" class="table-warning">
-<td colspan="4" style="font-size:20px;color:blue">
- Students Details</td></tr>
+                    <?php
+session_start();
+include('includes/dbconnection.php');
 
-    <tr class="table-info">
-    <th>Student Name</th>
-    <td><?php  echo $row->StudentName;?></td>
-     <th>Student Email</th>
-    <td><?php  echo $row->StudentEmail;?></td>
-  </tr>
-  <tr class="table-warning">
-     <th>Student Class</th>
-    <td><?php  echo $row->ClassName;?> <?php  echo $row->Section;?></td>
-     <th>Gender</th>
-    <td><?php  echo $row->Gender;?></td>
-  </tr>
-  <tr class="table-danger">
-    <th>Date of Birth</th>
-    <td><?php  echo $row->DOB;?></td>
-    <th>Student ID</th>
-    <td><?php  echo $row->StuID;?></td>
-  </tr>
-  <tr class="table-success">
-    <th>Father Name</th>
-    <td><?php  echo $row->FatherName;?></td>
-    <th>Mother Name</th>
-    <td><?php  echo $row->MotherName;?></td>
-  </tr>
-  <tr class="table-primary">
-    <th>Contact Number</th>
-    <td><?php  echo $row->ContactNumber;?></td>
-    <th>Altenate Number</th>
-    <td><?php  echo $row->AltenateNumber;?></td>
-  </tr>
-  <tr class="table-progress">
-    <th>Address</th>
-    <td><?php  echo $row->Address;?></td>
-    <th>User Name</th>
-    <td><?php  echo $row->UserName;?></td>
-  </tr>
-   <tr class="table-info">
-    <th>Profile Pics</th>
-    <td><img src="../admin/images/<?php echo $row->Image;?>"></td>
-    <th>Date of Admission</th>
-    <td><?php  echo $row->DateofAdmission;?></td>
-  </tr>
-  <?php $cnt=$cnt+1;}} ?>
+$sid = $_SESSION['sturecmsstuid'];
+$sql = "SELECT tblstudent.StudentName, tblstudent.StudentEmail, tblstudent.StudentClass, tblstudent.Gender, tblstudent.DOB, tblstudent.StuID, tblstudent.FatherName, tblstudent.MotherName, tblstudent.ContactNumber, tblstudent.AltenateNumber, tblstudent.Address, tblstudent.UserName, tblstudent.Password, tblstudent.Image, tblstudent.DateofAdmission, tblclass.ClassName, tblclass.Section FROM tblstudent JOIN tblclass ON tblclass.ID = tblstudent.StudentClass WHERE tblstudent.StuID = '$sid'";
+$query = mysqli_query($conn, $sql);
+
+if ($query) {
+    $row = mysqli_fetch_assoc($query);
+    if ($row) {
+        echo '<tr align="center" class="table-warning">';
+        echo '<td colspan="4" style="font-size:20px;color:blue">Students Details</td></tr>';
+        
+        echo '<tr class="table-info">';
+        echo '<th>Student Name</th><td>' . $row['StudentName'] . '</td>';
+        echo '<th>Student Email</th><td>' . $row['StudentEmail'] . '</td></tr>';
+        
+        echo '<tr class="table-warning">';
+        echo '<th>Student Class</th><td>' . $row['ClassName'] . ' ' . $row['Section'] . '</td>';
+        echo '<th>Gender</th><td>' . $row['Gender'] . '</td></tr>';
+        
+        echo '<tr class="table-danger">';
+        echo '<th>Date of Birth</th><td>' . $row['DOB'] . '</td>';
+        echo '<th>Student ID</th><td>' . $row['StuID'] . '</td></tr>';
+        
+        echo '<tr class="table-success">';
+        echo '<th>Father Name</th><td>' . $row['FatherName'] . '</td>';
+        echo '<th>Mother Name</th><td>' . $row['MotherName'] . '</td></tr>';
+        
+        echo '<tr class="table-primary">';
+        echo '<th>Contact Number</th><td>' . $row['ContactNumber'] . '</td>';
+        echo '<th>Alternate Number</th><td>' . $row['AltenateNumber'] . '</td></tr>';
+        
+        echo '<tr class="table-progress">';
+        echo '<th>Address</th><td>' . $row['Address'] . '</td>';
+        echo '<th>User Name</th><td>' . $row['UserName'] . '</td></tr>';
+        
+        echo '<tr class="table-info">';
+        echo '<th>Profile Pics</th><td><img src="../admin/images/' . $row['Image'] . '"></td>';
+        echo '<th>Date of Admission</th><td>' . $row['DateofAdmission'] . '</td></tr>';
+    } else {
+        echo "No data found.";
+    }
+} else {
+    echo "Error executing query: " . mysqli_error($conn);
+}
+?>
+
 </table>
                   </div>
                 </div>
